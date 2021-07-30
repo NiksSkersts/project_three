@@ -1,3 +1,6 @@
+[submodule "documentation"]
+	path = documentation
+	url = git@github.com:NiksSkersts/documentation.git
 [submodule "assets"]
 	path = assets
-	url = https://github.com/NiksSkersts/assets
+	url = git@github.com:NiksSkersts/assets.git
