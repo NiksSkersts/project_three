@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.8)
+set(CMAKE_CXX_STANDARD 20)
+set(SOURCE_FILES main.cpp world/tile.cpp world/tile.h world/chunk.cpp world/chunk.h basics/coordinates.h world/terrain_type.h world/objects.cpp world/objects.h)
+project(project_two)
+add_executable(project_two ${SOURCE_FILES})
