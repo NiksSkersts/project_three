@@ -34,7 +34,3 @@ std::vector<chunk> chunk::create_chunks(int x, int y)
     }
     return chunks;
 }
-std::vector<map_object> create_objects(int x, int y)
-{
-    return objs;
-}
