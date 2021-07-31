@@ -368,3 +368,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 utils/FastNoiseLite.hZone.Identifier
+/Testing/
+/project_two_autogen/
+/cmake_install.cmake
+/CMakeCache.txt
+/Makefile
+/project_two.cbp
+/project_twod
