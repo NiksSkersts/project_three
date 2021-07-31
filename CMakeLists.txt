@@ -10,7 +10,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_PREFIX_PATH "C:\\Qt\\6.1.2\\mingw81_64")
-set(SOURCE_FILES main.cpp world/tile.cpp world/tile.h world/chunk.cpp world/chunk.h basics/coordinates.h world/terrain_type.h world/objects.cpp world/objects.h scenes/windows/main_menu.h scenes/windows/main_menu.cpp)
+set(SOURCE_FILES main.cpp world/tile.h basics/coordinates.h world/terrain_type.h scenes/main_menu.cpp scenes/main_menu.h scenes/main_menu.ui world/map.cpp world/map.h scenes/game_space.cpp scenes/game_space.h scenes/game_space.ui)
 add_executable(project_two ${SOURCE_FILES})
 
 #target init
@@ -20,10 +20,12 @@ set_target_properties(${TARGET_NAME} PROPERTIES DEBUG_OUTPUT_NAME "${TARGET_NAME
 #find packages
 find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Widgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
 find_package(Qt${QT_MAJOR_VERSION} COMPONENTS Gui REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
+find_package(Qt${QT_MAJOR_VERSION} COMPONENTS OpenGLWidgets REQUIRED PATHS $ENV{Qt${QT_MAJOR_VERSION}_HOME})
 
 #link libs
-target_link_libraries( Qt${QT_MAJOR_VERSION}::Gui)
+target_link_libraries(Qt${QT_MAJOR_VERSION}::Gui)
 target_link_libraries(project_two PRIVATE Qt${QT_MAJOR_VERSION}::Widgets)
+target_link_libraries(project_two PRIVATE Qt${QT_MAJOR_VERSION}::OpenGLWidgets)
 
 #include dirs
 target_include_directories(${TARGET_NAME} PRIVATE ${Qt${QT_MAJOR_VERSION}_INCLUDE_DIRS})

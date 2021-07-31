@@ -11,4 +11,6 @@ public:
     const int RenderSize = 32;
     const int ChunkSize = 32;
     const int WorldSize = 3;
+    const int SizeX = 100;
+    const int SizeY = 100;
 };
