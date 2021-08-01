@@ -1,12 +1,9 @@
-#include <QApplication>
-#include <QVulkanInstance>
-#include <scenes/main_menu.h>
-
-int main(int argc, char *argv[])
+#include <modules/AppInit.h>
+#include <basics/constants.h>
+#include "raylib.h"
+int main()
 {
-    QApplication application(argc,argv);
-    main_menu mainMenu;
-    mainMenu.resize(500,500);
-    mainMenu.showNormal();
-    return application.exec();
+    constants con;
+    AppInit app(con.screensize,con.screensize);
+    return 0;
 }
