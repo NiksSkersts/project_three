@@ -1,29 +1,18 @@
-//
-// Created by niks-skersts on 8/1/21.
-//
-
-#ifndef PROJECT_TWO_APPINIT_H
-#define PROJECT_TWO_APPINIT_H
-
-
 #include <raylib.h>
+#include "map"
+#include <basics/constants.h>
+#include "raylib.h"
 
 class AppInit {
-public:
-    AppInit(int w, int h);
+private:
     void initCamera();
     void gameLoop();
+    Camera2D camera2D;
+    Camera3D camera3D;
+
 public:
-    Camera2D camera;
-    bool req_close = false;
-
-
+    AppInit(int w, int h);
+private:
     void update();
-
     void draw();
-
-    void initMap();
 };
-
-
-#endif //PROJECT_TWO_APPINIT_H

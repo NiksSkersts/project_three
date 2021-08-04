@@ -1,37 +1,52 @@
-//
-// Created by niks-skersts on 8/1/21.
-//
-
-#include <tuple>
-#include <map>
-#include <modules/worldgen/chunk.h>
-#include <basics/constants.h>
-#include <modules/worldgen/terrain_type.h>
-#include <vector>
+#include <modules/worldgen/map.h>
 #include "AppInit.h"
-#include "raylib.h"
-Vector3 cubePosition;
-constants c;
-std::map<std::tuple<float,float>,chunk> arr;
+using namespace std;
+const constants c;
+world_map worldMap(c);
 AppInit::AppInit(int w, int h) {
     InitWindow(w,h,"project_two");
-    SetTargetFPS(c.FPS);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(c.FPS);
+    SetExitKey(27);
     initCamera();
-    cubePosition = { 0.0f, 0.0f, 0.0f };
     gameLoop();
 }
-void AppInit::initMap()
-{
-}
 void AppInit::initCamera() {
-    camera.offset = (Vector2){0,0};
-    camera.target = (Vector2){ 0.0f, 0.0f };      // Camera looking at point
-    camera.zoom= 1;
+    camera2D.zoom = 1.0f;
+    camera2D.offset = {GetScreenWidth()+0.0f,GetScreenHeight()+0.0f};
+    camera2D.target = {0.0f,0.0f};
+    camera3D.position = {0,0,500};
+    camera3D.target = {21,21,0};
+    camera3D.fovy = 120;
+    camera3D.projection = CAMERA_ORTHOGRAPHIC;
+    SetCameraMode(camera3D,CAMERA_FREE);
 }
-
 void AppInit::gameLoop() {
-    while (!req_close==true)
+    while (!WindowShouldClose())
     {
+        UpdateCamera(&camera3D);
+        switch (GetKeyPressed()) {
+            case KEY_UP:
+                camera3D.target.y+=10;
+                camera3D.position.y+=10;
+                break;
+            case KEY_DOWN:
+                camera3D.target.y-=10;
+                camera3D.position.y-=10;
+                break;
+            case KEY_RIGHT:
+                camera3D.target.x+=10;
+                camera3D.position.x+=10;
+                break;
+            case KEY_LEFT:
+                camera3D.target.x-=10;
+                camera3D.position.x-=10;
+                break;
+            case KEY_W:
+                camera3D.target.z+=100;
+                break;
+            case KEY_S:
+                camera3D.target.z-=100;
+        }
         update();
         draw();
     }
@@ -39,28 +54,33 @@ void AppInit::gameLoop() {
 }
 void AppInit::update()
 {
-    if (arr.count()>9)
-        arr.clear();
-    arr.emplace(std::tuple(0,0),chunk((Vector2){0,0}));
 }
 void AppInit::draw()
 {
     BeginDrawing();
-
-    ClearBackground(RAYWHITE);
-    BeginMode2D(camera);
-    for (auto x:arr) {
-        for (auto y:x.second.chunk_array) {
-            if (y.second.type==terrain_type::grass)
-                DrawRectangleLines(y.second.coordinates.x+(31*y.second.coordinates.x),(y.second.coordinates.y*31)+y.second.coordinates.y,32,32,GREEN);
-            if (y.second.type==terrain_type::hills)
-                DrawRectangleLines(y.second.coordinates.x+(31*y.second.coordinates.x),(y.second.coordinates.y*31)+y.second.coordinates.y,32,32,GRAY);
-            if (y.second.type==terrain_type::water)
-                DrawRectangleLines(y.second.coordinates.x+(31*y.second.coordinates.x),(y.second.coordinates.y*31)+y.second.coordinates.y,32,32,BLUE);
-        }
-    }
-    EndMode3D();
+    ClearBackground(BLACK);
+        //BeginMode2D(camera2D);
+        BeginMode3D(camera3D);
+        for (auto x:worldMap.chunk_map)
+            for(auto y : x.second.tiles_in_chunk)
+            {
+                switch (y.type) {
+                    case terrain_type::grass:
+                        DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},GREEN);
+                        break;
+                        case terrain_type::water:
+                            DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},BLUE);
+                            break;
+                            case terrain_type::hills:
+                                DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},GRAY);
+                                break;
+                                case terrain_type::forest:
+                                    DrawRectangle(y.coordinates.x,y.coordinates.y,c.tilesize,c.tilesize,BLACK);
+                                    break;
+                }
+            }
+        //EndMode2D();
+        EndMode3D();
     DrawFPS(10, 10);
     EndDrawing();
 }
-

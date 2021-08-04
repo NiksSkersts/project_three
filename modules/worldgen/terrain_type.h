@@ -3,5 +3,6 @@ enum class terrain_type
         {
     grass,
     water,
-    hills
+    hills,
+    forest
         };
