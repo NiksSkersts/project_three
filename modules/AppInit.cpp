@@ -1,4 +1,6 @@
 #include <modules/worldgen/map.h>
+#include <string>
+#include <algorithm>
 #include "AppInit.h"
 using namespace std;
 const constants c;
@@ -7,6 +9,11 @@ AppInit::AppInit(int w, int h) {
     InitWindow(w,h,"project_two");
     SetTargetFPS(c.FPS);
     SetExitKey(27);
+    //init noise settings;
+    worldMap.noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    worldMap.noise.SetSeed(c.seed);
+    worldMap.noise.SetFrequency(0.1);
+    //end init;
     initCamera();
     gameLoop();
 }
@@ -14,8 +21,8 @@ void AppInit::initCamera() {
     camera2D.zoom = 1.0f;
     camera2D.offset = {GetScreenWidth()+0.0f,GetScreenHeight()+0.0f};
     camera2D.target = {0.0f,0.0f};
-    camera3D.position = {0,0,500};
-    camera3D.target = {21,21,0};
+    camera3D.position = {0,0,900};
+    camera3D.target = {0,0,0};
     camera3D.fovy = 120;
     camera3D.projection = CAMERA_ORTHOGRAPHIC;
     SetCameraMode(camera3D,CAMERA_FREE);
@@ -26,26 +33,21 @@ void AppInit::gameLoop() {
         UpdateCamera(&camera3D);
         switch (GetKeyPressed()) {
             case KEY_UP:
-                camera3D.target.y+=10;
                 camera3D.position.y+=10;
+                camera3D.target.y+=10;
                 break;
             case KEY_DOWN:
-                camera3D.target.y-=10;
                 camera3D.position.y-=10;
+                camera3D.target.y-=10;
                 break;
             case KEY_RIGHT:
-                camera3D.target.x+=10;
                 camera3D.position.x+=10;
+                camera3D.target.x+=10;
                 break;
             case KEY_LEFT:
-                camera3D.target.x-=10;
                 camera3D.position.x-=10;
+                camera3D.target.x-=10;
                 break;
-            case KEY_W:
-                camera3D.target.z+=100;
-                break;
-            case KEY_S:
-                camera3D.target.z-=100;
         }
         update();
         draw();
@@ -54,33 +56,36 @@ void AppInit::gameLoop() {
 }
 void AppInit::update()
 {
+
 }
 void AppInit::draw()
 {
     BeginDrawing();
     ClearBackground(BLACK);
-        //BeginMode2D(camera2D);
-        BeginMode3D(camera3D);
-        for (auto x:worldMap.chunk_map)
-            for(auto y : x.second.tiles_in_chunk)
-            {
-                switch (y.type) {
-                    case terrain_type::grass:
-                        DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},GREEN);
-                        break;
-                        case terrain_type::water:
-                            DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},BLUE);
+    //BeginMode2D(camera2D);
+    BeginMode3D(camera3D);
+    for (int i = 0; i < c.mapsize; ++i)
+        for (int j = 0; j < c.mapsize; ++j)
+            for (int k = 0; k < c.chunksize; ++k)
+                for (int l = 0; l < c.chunksize; ++l) {
+                    auto t = *worldMap.chunk_map.find(std::tuple(i*c.chunksize,j*c.chunksize))->second.tiles_in_chunk[k][l];
+                    switch (t.type) {
+                        case terrain_type::grass:
+                            DrawCubeV({(t.coordinates.x*c.tilesize),(t.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},GREEN);
                             break;
-                            case terrain_type::hills:
-                                DrawCubeV({(y.coordinates.x*c.tilesize),(y.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},GRAY);
+                            case terrain_type::water:
+                                DrawCubeV({(t.coordinates.x*c.tilesize),(t.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},BLUE);
                                 break;
-                                case terrain_type::forest:
-                                    DrawRectangle(y.coordinates.x,y.coordinates.y,c.tilesize,c.tilesize,BLACK);
+                                case terrain_type::hills:
+                                    DrawCubeV({(t.coordinates.x*c.tilesize),(t.coordinates.y*c.tilesize),0},{(float)c.tilesize,(float )c.tilesize,1},RED);
                                     break;
+                                    case terrain_type::forest:
+                                        DrawRectangle(t.coordinates.x,t.coordinates.y,c.tilesize,c.tilesize,BLACK);
+                                        break;
+                    }
                 }
-            }
-        //EndMode2D();
-        EndMode3D();
+    //EndMode2D();
+    EndMode3D();
     DrawFPS(10, 10);
     EndDrawing();
 }
