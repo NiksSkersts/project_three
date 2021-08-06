@@ -1,6 +1,4 @@
 #include <modules/worldgen/map.h>
-#include <string>
-#include <algorithm>
 #include "AppInit.h"
 using namespace std;
 const constants c;
@@ -18,12 +16,9 @@ AppInit::AppInit(int w, int h) {
     gameLoop();
 }
 void AppInit::initCamera() {
-    camera2D.zoom = 1.0f;
-    camera2D.offset = {GetScreenWidth()+0.0f,GetScreenHeight()+0.0f};
-    camera2D.target = {0.0f,0.0f};
-    camera3D.position = {0,0,900};
+    camera3D.position = {0,0,1000};
     camera3D.target = {0,0,0};
-    camera3D.fovy = 120;
+    camera3D.fovy = 180;
     camera3D.projection = CAMERA_ORTHOGRAPHIC;
     SetCameraMode(camera3D,CAMERA_FREE);
 }
@@ -62,7 +57,6 @@ void AppInit::draw()
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    //BeginMode2D(camera2D);
     BeginMode3D(camera3D);
     for (int i = 0; i < c.mapsize; ++i)
         for (int j = 0; j < c.mapsize; ++j)
@@ -84,7 +78,6 @@ void AppInit::draw()
                                         break;
                     }
                 }
-    //EndMode2D();
     EndMode3D();
     DrawFPS(10, 10);
     EndDrawing();

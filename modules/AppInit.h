@@ -7,7 +7,6 @@ class AppInit {
 private:
     void initCamera();
     void gameLoop();
-    Camera2D camera2D;
     Camera3D camera3D;
 
 public:
