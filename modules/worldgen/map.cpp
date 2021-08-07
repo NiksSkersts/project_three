@@ -1,20 +1,20 @@
 #include <tuple>
 #include "map.h"
 world_map::world_map(constants c) {
-    for (int k = 0; k < c.mapsize ; ++k) {
-        for (int l = 0; l < c.mapsize ; ++l) {
+    for (int k = 0; k < c.mapsize; ++k) {
+        for (int l = 0; l < c.mapsize; ++l) {
+            chunk_map.emplace(std::tuple((int)k*c.chunksize,(int)l*c.chunksize),chunk({(float)k*c.chunksize,(float )l*c.chunksize}));
             for (int x = 0; x< c.chunksize;++x)
             {
                 for(int y = 0; y<c.chunksize;++y)
                 {
-                    Vector2 s_cords = {static_cast<float>(round(k*c.chunksize)),static_cast<float>(round(l*c.chunksize))};
-                    chunk_map.emplace(std::tuple((int)s_cords.x,(int)s_cords.y),chunk(s_cords));
+                    Vector2 s_cords = {(float)(k*c.chunksize)+x,(float)(l*c.chunksize)+y};
                     //sec_check if var noise ! x>= -1  AND !x <= 1 : Do it again.
                     sec_check:
-                    float var_noise = noise.GetNoise((float)x,(float)y);
+                    float var_noise = noise.GetNoise((float)s_cords.x,(float)s_cords.y);
                     if ((var_noise>=-1 && var_noise <=1)!= true) goto sec_check;
                     //3D vector coords rounded to nearest integer, except for z as it will always be -1>=x<=1;
-                    Vector3 var_coords = {roundf(x+s_cords.x),roundf(y+s_cords.y),var_noise};
+                    Vector3 var_coords = {roundf(s_cords.x),roundf(s_cords.y),var_noise};
                     float var_temperature = assign_temp(var_noise);
                     float var_humidity = assign_hum(var_noise,var_temperature);
                     terrain_type var_terrain = assign_terrain(var_noise,var_humidity,var_temperature);
@@ -22,7 +22,7 @@ world_map::world_map(constants c) {
                     object_type var_obj = object_type::NONE;
                     if (var_terrain==terrain_type::forest || var_terrain==terrain_type::hills)
                         var_obj = assign_obj(var_terrain);
-                    chunk_map.find(std::tuple(s_cords.x,s_cords.y))->second.tiles_in_chunk[x][y] = new tile(var_coords,var_terrain,var_humidity,var_temperature,var_obj);
+                    chunk_map.find(std::tuple((int)k*c.chunksize,(int)l*c.chunksize))->second.tiles_in_chunk[x][y] = new tile(var_coords,var_terrain,var_humidity,var_temperature,var_obj);
                 }
             }
         }
