@@ -27,4 +27,6 @@ private:
     const char * function_get_current_obj();
 
     void function_add_chunks_to_queue();
+
+    void function_load_textures();
 };

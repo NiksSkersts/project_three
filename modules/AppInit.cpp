@@ -5,9 +5,11 @@ using namespace std;
 const constants c;
 world_map worldMap(c);
 vector<chunk> map_queue;
-AppInit::AppInit(int w, int h) {
+AppInit::AppInit(int w, int h)
+//Opengl window init, map init and some basic config;
+{
     InitWindow(w,h,"project_two");
-    LoadTextures();
+    function_load_textures();
     SetTargetFPS(c.FPS);
     SetExitKey(27);
     //init noise settings;
@@ -18,7 +20,9 @@ AppInit::AppInit(int w, int h) {
     initCamera();
     gameLoop();
 }
-void AppInit::initCamera() {
+void AppInit::initCamera()
+//Camera init
+{
     camera2D.target = { GetScreenWidth() + 20.0f, GetScreenHeight() + 20.0f };
     camera2D.offset = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     camera2D.rotation = 0.0f;
@@ -29,25 +33,11 @@ void AppInit::initCamera() {
     camera3D.projection = CAMERA_ORTHOGRAPHIC;
     SetCameraMode(camera3D,CAMERA_FREE);
 }
-void AppInit::gameLoop() {
+void AppInit::gameLoop()
+//Base gameloop and de-init when the while loop breaks;
+{
     while (!WindowShouldClose())
     {
-        UpdateCamera(&camera3D);
-        switch (GetKeyPressed()) {
-            case KEY_UP:
-                camera2D.target.y-=100;
-                break;
-            case KEY_DOWN:
-                camera2D.target.y+=100;
-                break;
-            case KEY_RIGHT:
-                camera2D.target.x+=100;
-                break;
-            case KEY_LEFT:
-                camera2D.target.x-=100;
-                break;
-
-        }
         update();
         draw();
     }
@@ -56,9 +46,27 @@ void AppInit::gameLoop() {
     CloseWindow();
 }
 void AppInit::update()
+//Update part of the loop. For variable, camera  updates and so on;
 {
+    UpdateCamera(&camera3D);
+    switch (GetKeyPressed()) {
+        case KEY_UP:
+            camera2D.target.y-=100;
+            break;
+            case KEY_DOWN:
+                camera2D.target.y+=100;
+                break;
+                case KEY_RIGHT:
+                    camera2D.target.x+=100;
+                    break;
+                    case KEY_LEFT:
+                        camera2D.target.x-=100;
+                        break;
+
+    }
 }
 void AppInit::draw()
+//Draw part of the loop. Rendering part
 {
     ClearBackground(BLACK);
     BeginDrawing();
@@ -101,7 +109,8 @@ void AppInit::draw()
     }
     EndDrawing();
 }
-void AppInit::LoadTextures()
+void AppInit::function_load_textures()
+//Load textures on app init;
 {
     grass = LoadImage("../assets/png/grass2.png");
     water = LoadImage("../assets/png/water.png");
@@ -114,6 +123,8 @@ void AppInit::LoadTextures()
     UnloadImage(water);
 }
 void AppInit::function_add_chunks_to_queue()
+//load chunks into a vector;
+//Vector will be used to limit the amount of loaded chunks;
 {
         for (int i = 0; i < c.mapsize; ++i)
             for (int j = 0; j < c.mapsize; ++j){
@@ -122,7 +133,9 @@ void AppInit::function_add_chunks_to_queue()
                 map_queue.push_back(t);
             }
 }
-const char * AppInit::function_get_current_obj() {
+const char * AppInit::function_get_current_obj()
+//Gets current tile based on ScreenToWorld coords and return the object that's on tile;
+{
         auto stw= GetScreenToWorld2D(GetMousePosition(),camera2D);
         auto chunk_x =(int) (stw.x/((c.chunksize*c.chunksize)));
         auto chunk_y =(int) (stw.y/(c.chunksize*c.chunksize));
