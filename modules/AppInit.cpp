@@ -5,10 +5,15 @@ using namespace std;
 const constants c;
 world_map worldMap(c);
 vector<chunk> map_queue;
-AppInit::AppInit(int w, int h)
+AppInit::AppInit()
 //Opengl window init, map init and some basic config;
 {
-    InitWindow(w,h,"project_two");
+    width = GetScreenWidth()/2;
+    height = GetScreenHeight()/2;
+    //fallback values
+    if (width == 0) width = 500;
+    if (height == 0) height = 500;
+    InitWindow(width,height,"project_two");
     function_load_textures();
     SetTargetFPS(c.FPS);
     SetExitKey(27);
@@ -26,7 +31,7 @@ void AppInit::initCamera()
     camera2D.target = { GetScreenWidth() + 20.0f, GetScreenHeight() + 20.0f };
     camera2D.offset = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     camera2D.rotation = 0.0f;
-    camera2D.zoom = 1.0f;
+    camera2D.zoom = 2.0f;
     camera3D.position = {0,0,50};
     camera3D.target = {0,0,0};
     camera3D.fovy = 180;
@@ -41,13 +46,19 @@ void AppInit::gameLoop()
         update();
         draw();
     }
+    //de-init part
     UnloadTexture(grass_texture);
     UnloadTexture(water_texture);
+    UnloadTexture(button_build_texture);
+    UnloadTexture(mountain_texture);
     CloseWindow();
 }
 void AppInit::update()
 //Update part of the loop. For variable, camera  updates and so on;
 {
+    //update window size for responsive layout;
+    height = GetScreenHeight();
+    width = GetScreenWidth();
     UpdateCamera(&camera3D);
     switch (GetKeyPressed()) {
         case KEY_UP:
@@ -99,28 +110,38 @@ void AppInit::draw()
                         break;
                 }
             }
-
     EndMode2D();
+    //overlay
+    DrawTexture(button_build_texture,10,height-(c.tilesize+10), Fade(WHITE,1.0f));
     DrawFPS(10, 10);
+    //functions
     if (IsKeyDown(KEY_A))
     {
         auto i = std::async(std::launch::deferred,&AppInit::function_get_current_obj,this);
-        DrawText(i.get(),10,40,20,BLACK);
+        DrawText(i.get(),10,40,40,WHITE);
     }
     EndDrawing();
 }
 void AppInit::function_load_textures()
 //Load textures on app init;
 {
+    //images
     grass = LoadImage("../assets/png/grass2.png");
     water = LoadImage("../assets/png/water.png");
     mountain = LoadImage("../assets/png/mountain.png");
+    //button_images
+    button_build_img = LoadImage("../assets/png/button_build.png");
+    //textures
     grass_texture = LoadTextureFromImage(grass);
     water_texture = LoadTextureFromImage(water);
     mountain_texture = LoadTextureFromImage(mountain);
+    //button_textures
+    button_build_texture = LoadTextureFromImage(button_build_img);
     //unload - img no longer needed;
     UnloadImage(grass);
     UnloadImage(water);
+    UnloadImage(mountain);
+    UnloadImage(button_build_img);
 }
 void AppInit::function_add_chunks_to_queue()
 //load chunks into a vector;

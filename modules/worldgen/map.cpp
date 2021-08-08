@@ -5,7 +5,6 @@ world_map::world_map(constants c) {
         for (int l = 0; l < c.mapsize; ++l) {
             chunk_map.emplace(std::tuple((int)k*c.chunksize,(int)l*c.chunksize),chunk({(float)k*c.chunksize,(float )l*c.chunksize}));
             for (int x = 0; x< c.chunksize;++x)
-            {
                 for(int y = 0; y<c.chunksize;++y)
                 {
                     Vector2 s_cords = {(float)(k*c.chunksize)+x,(float)(l*c.chunksize)+y};
@@ -24,7 +23,6 @@ world_map::world_map(constants c) {
                         var_obj = assign_obj(var_terrain);
                     chunk_map.find(std::tuple((int)k*c.chunksize,(int)l*c.chunksize))->second.tiles_in_chunk[x][y] = new tile(var_coords,var_terrain,var_humidity,var_temperature,var_obj);
                 }
-            }
         }
     }
 }

@@ -4,25 +4,30 @@
 
 class AppInit {
 private:
+    int width;
+    int height;
     void initCamera();
     void gameLoop();
     Camera3D camera3D;
     Camera2D camera2D;
+
+
+    //images
     Image grass;
     Image water;
     Image mountain;
+    Image button_build_img;
+    //textures
     Texture2D grass_texture;
     Texture2D water_texture;
     Texture2D mountain_texture;
-
+    Texture2D button_build_texture;
 
 public:
-    AppInit(int w, int h);
+    AppInit();
 private:
     void update();
     void draw();
-
-    void LoadTextures();
 
     const char * function_get_current_obj();
 
