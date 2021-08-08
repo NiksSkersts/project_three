@@ -24,7 +24,7 @@ private:
 
     void LoadTextures();
 
-    void function_get_current_obj();
+    const char * function_get_current_obj();
 
     void function_add_chunks_to_queue();
 };

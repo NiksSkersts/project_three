@@ -1,5 +1,6 @@
 #include "AppInit.h"
 #include "queue"
+#include <future>
 using namespace std;
 const constants c;
 world_map worldMap(c);
@@ -45,6 +46,7 @@ void AppInit::gameLoop() {
             case KEY_LEFT:
                 camera2D.target.x-=100;
                 break;
+
         }
         update();
         draw();
@@ -91,8 +93,12 @@ void AppInit::draw()
             }
 
     EndMode2D();
-    function_get_current_obj();
     DrawFPS(10, 10);
+    if (IsKeyDown(KEY_A))
+    {
+        auto i = std::async(std::launch::deferred,&AppInit::function_get_current_obj,this);
+        DrawText(i.get(),10,40,20,BLACK);
+    }
     EndDrawing();
 }
 void AppInit::LoadTextures()
@@ -109,16 +115,14 @@ void AppInit::LoadTextures()
 }
 void AppInit::function_add_chunks_to_queue()
 {
-    for (int i = 0; i < c.mapsize; ++i)
-        for (int j = 0; j < c.mapsize; ++j){
-                    auto b = worldMap.chunk_map.find(std::tuple(i*c.chunksize,j*c.chunksize));
-                    auto t = *&b->second;
-                    map_queue.push_back(t);
-                }
+        for (int i = 0; i < c.mapsize; ++i)
+            for (int j = 0; j < c.mapsize; ++j){
+                auto b = worldMap.chunk_map.find(std::tuple(i*c.chunksize,j*c.chunksize));
+                auto t = *&b->second;
+                map_queue.push_back(t);
+            }
 }
-void AppInit::function_get_current_obj() {
-    if (IsKeyDown(KEY_A))
-    {
+const char * AppInit::function_get_current_obj() {
         auto stw= GetScreenToWorld2D(GetMousePosition(),camera2D);
         auto chunk_x =(int) (stw.x/((c.chunksize*c.chunksize)));
         auto chunk_y =(int) (stw.y/(c.chunksize*c.chunksize));
@@ -134,13 +138,10 @@ void AppInit::function_get_current_obj() {
                     case object_type::NONE:
                         break;
                     case object_type::Hill:
-                        DrawText("hill",10,40,20,BLACK);
-                        break;
+                        return "hill";
                         case object_type::Forest:
-                            DrawText("forest",10,40,20,BLACK);
-                            break;
+                            return "forest";
                 }
             }
-
-        }
+        return "No objects found";
 }
