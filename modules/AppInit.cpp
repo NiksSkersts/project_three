@@ -20,9 +20,9 @@ AppInit::AppInit()
   height = GetScreenHeight() / 2;
   // fallback values
   if (width == 0)
-    width = 500;
+    width = 1500;
   if (height == 0)
-    height = 500;
+    height = 1000;
   InitWindow(width, height, "project_two");
   content_manager cm;
   SetTargetFPS(var_fps);
@@ -31,7 +31,6 @@ AppInit::AppInit()
   worldMap.noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
   worldMap.noise.SetSeed(var_seed);
   // end init;
-  function_add_chunks_to_queue();
   initCamera();
   gameLoop(cm);
 }
@@ -46,6 +45,7 @@ void AppInit::initCamera()
 void AppInit::gameLoop(content_manager manager)
 // Base gameloop and de-init when the while loop breaks;
 {
+  map_queue.reserve(16);
   while (!WindowShouldClose())
   {
     update();
@@ -58,6 +58,7 @@ void AppInit::gameLoop(content_manager manager)
 void AppInit::update()
 // Update part of the loop. For variable, camera  updates and so on;
 {
+    function_add_chunks_to_queue();
   // update window size for responsive layout;
   height = GetScreenHeight();
   width = GetScreenWidth();
@@ -79,8 +80,9 @@ void AppInit::update()
     uint in_button_border = function_check_button_boundaries();
     if (in_button_border !=0){
       cout<<"here";
-    }
+    };
     break;
+
   }
 }
 void AppInit::draw(content_manager manager)
@@ -134,21 +136,22 @@ void AppInit::draw(content_manager manager)
   EndMode2D();
   // functions
   function_draw_ui(manager);
-  if (IsKeyDown(KEY_A))
-  {
-    // creates a software thread. Delegating threading to OS instead of HW;
-    auto i = std::async(std::launch::deferred,
-                        &AppInit::function_get_current_obj, this);
-    DrawText(i.get(), 10, 40, 40, WHITE);
-  }
   EndDrawing();
 }
 void AppInit::function_add_chunks_to_queue()
 // load chunks into a vector;
 // Vector will be used to limit the amount of loaded chunks;
 {
-  for (int i = 0; i < var_mapsize; ++i)
-    for (int j = 0; j < var_mapsize; ++j)
+  //todo : check if clearing is less expensive than implementing std::map to avoid duplicate chunk load;
+  map_queue.clear();
+  auto camera_x = (int)(camera2D.target.x/1024)-1;
+  auto camera_y = (int)(camera2D.target.y/1024)-1;
+  //negative int will return SEGFAULT
+  if(camera_x<0) camera_x = 0;
+  if(camera_y<0) camera_y = 0;
+
+  for (int i = (int)camera_x; i < camera_x+3; ++i)
+    for (int j = (int)camera_y; j < camera_y+3; ++j)
     {
       auto b = worldMap.chunk_map.find(
           std::tuple(i * var_chunksize, j * var_chunksize));
@@ -190,6 +193,11 @@ const char *AppInit::function_get_current_obj()
 void AppInit::function_draw_ui(content_manager manager)
 {
   DrawFPS(10, 10);
+  DrawText(to_string(GetFrameTime()).c_str(),10,30,14,WHITE);
+  if (IsKeyDown(KEY_A)){
+    auto object_draw_text = std::async(std::launch::deferred,&AppInit::function_get_current_obj, this);
+    DrawText(object_draw_text.get(), 10, 40, 40, WHITE);
+  }
   for (auto buttons : gm.button_storage)
   {
     switch (buttons.buttonType)
