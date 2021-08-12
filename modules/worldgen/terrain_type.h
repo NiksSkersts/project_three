@@ -1,6 +1,5 @@
 #pragma once
-enum class terrain_type
-        {
+enum class terrain_type{
     grass,
     water,
     hills,

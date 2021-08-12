@@ -1,37 +1,25 @@
 #include <raylib.h>
-#include <basics/constants.h>
 #include <modules/worldgen/map.h>
-
+#include <modules/content/content_manager.h>
+#include "queue"
+#include <modules/ui/game_ui.h>
+#include <future>
+#include "thread"
+#include "../constants.h"
 class AppInit {
-private:
+public:
     int width;
     int height;
-    void initCamera();
-    void gameLoop();
-    Camera3D camera3D;
-    Camera2D camera2D;
-
-
-    //images
-    Image grass;
-    Image water;
-    Image mountain;
-    Image button_build_img;
-    //textures
-    Texture2D grass_texture;
-    Texture2D water_texture;
-    Texture2D mountain_texture;
-    Texture2D button_build_texture;
-
-public:
     AppInit();
 private:
+    void initCamera();
+    void gameLoop(content_manager manager);
+    Camera2D camera2D;
     void update();
-    void draw();
-
     const char * function_get_current_obj();
-
     void function_add_chunks_to_queue();
-
-    void function_load_textures();
+    void draw(content_manager manager);
+    void function_draw_ui(content_manager manager);
+    void function_call_draw_texture(Texture2D texture, float x, float y,Color col);
+    uint function_check_button_boundaries();
 };

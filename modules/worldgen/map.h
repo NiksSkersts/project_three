@@ -1,11 +1,11 @@
 #include <cmath>
 #include <utils/FastNoiseLite.h>
 #include <map>
-#include <basics/constants.h>
 #include "chunk.h"
+#include "../../constants.h"
 class world_map {
 public:
-    world_map(constants c);
+    world_map();
     std::map<std::tuple<int,int>,chunk> chunk_map;
     terrain_type assign_terrain(float z, float hum, float temp);
     float assign_temp(float z);

@@ -6,7 +6,7 @@ project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Project Description")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(SOURCE_FILES main.cpp basics/constants.h modules/AppInit.cpp modules/AppInit.h modules/worldgen/tile.h modules/worldgen/terrain_type.h modules/worldgen/chunk.h modules/worldgen/object_type.h modules/worldgen/map.cpp modules/worldgen/map.h)
+set(SOURCE_FILES main.cpp modules/AppInit.cpp modules/AppInit.h modules/worldgen/tile.h modules/worldgen/terrain_type.h modules/worldgen/chunk.h modules/worldgen/object_type.h modules/worldgen/map.cpp modules/worldgen/map.h modules/ui/game_ui.cpp modules/ui/game_ui.h modules/ui/button.h modules/content/content_manager.h modules/ui/button_type.h)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 #add exec
 add_executable(project_two ${SOURCE_FILES})
