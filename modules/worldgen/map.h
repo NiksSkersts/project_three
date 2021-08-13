@@ -17,6 +17,7 @@ public:
     FastNoiseLite noise;
     void function_sql_save_map();
 private:
+    void function_sql_create_db();
     int function_sql_conn_check();
     void function_sql_load_map();
     typedef int (*sqlite3_callback)(
