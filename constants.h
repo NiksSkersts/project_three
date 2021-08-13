@@ -2,7 +2,7 @@
 struct constants
 {
     //mapsize - size in tiles!
-    static const int mapsize = 32;
+    static const int mapsize = 4;
     //size of tile in px!
     static const int tilesize = 32;
     // size - size in tiles. e.g 32 tile units, thus one chunk is made out of 32 tiles which are of 32px size;

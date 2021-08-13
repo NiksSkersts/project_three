@@ -46,12 +46,12 @@ void AppInit::gameLoop(content_manager manager)
 // Base gameloop and de-init when the while loop breaks;
 {
   map_queue.reserve(16);
-  while (!WindowShouldClose())
-  {
+  while (!WindowShouldClose()){
     update();
     draw(manager);
   }
   // de-init part
+  worldMap.function_sql_save_map();
   manager.function_unload_textures();
   CloseWindow();
 }
@@ -82,7 +82,6 @@ void AppInit::update()
       cout<<"here";
     };
     break;
-
   }
 }
 void AppInit::draw(content_manager manager)
@@ -146,15 +145,18 @@ void AppInit::function_add_chunks_to_queue()
   map_queue.clear();
   auto camera_x = (int)(camera2D.target.x/1024)-1;
   auto camera_y = (int)(camera2D.target.y/1024)-1;
+  auto camera_x_end = camera_x+3;
+  auto camera_y_end = camera_x+3;
   //negative int will return SEGFAULT
   if(camera_x<0) camera_x = 0;
   if(camera_y<0) camera_y = 0;
+  if(camera_x_end>var_mapsize) camera_x_end = var_mapsize;
+  if (camera_y_end>var_mapsize)camera_y_end =var_mapsize;
 
-  for (int i = (int)camera_x; i < camera_x+3; ++i)
-    for (int j = (int)camera_y; j < camera_y+3; ++j)
+  for (int i = (int)camera_x; i < camera_x_end; ++i)
+    for (int j = (int)camera_y; j < camera_y_end; ++j)
     {
-      auto b = worldMap.chunk_map.find(
-          std::tuple(i * var_chunksize, j * var_chunksize));
+      auto b = worldMap.chunk_map.find(std::tuple(i * var_chunksize, j * var_chunksize));
       auto t = *&b->second;
       map_queue.push_back(t);
     }
