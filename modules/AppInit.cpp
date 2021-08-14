@@ -51,7 +51,7 @@ void AppInit::gameLoop(content_manager manager)
     draw(manager);
   }
   // de-init part
-  worldMap.function_sql_save_map();
+  worldMap.function_sql_map(0);
   manager.function_unload_textures();
   CloseWindow();
 }

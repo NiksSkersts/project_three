@@ -15,11 +15,11 @@ public:
     void function_create_map();
     std::map<std::tuple<int,int>,chunk> chunk_map;
     FastNoiseLite noise;
-    void function_sql_save_map();
+    void function_sql_map(int function);
 private:
     void function_sql_create_db();
     int function_sql_conn_check();
-    void function_sql_load_map();
+    void subfunction_sql_load_chunk(int i, int j);
     typedef int (*sqlite3_callback)(
         void*,    /* Data provided in the 4th argument of sqlite3_exec() */
         int,      /* The number of columns in row */
@@ -30,4 +30,13 @@ private:
     float assign_temp(float z);
     float assign_hum(float z, float temp);
     object_type assign_obj(terrain_type var_terrain);
+    void function_sql_open_connection();
+    void subfunction_sql_save_chunk(chunk chunk);
+    void subfunction_sql_ls_chunk(int function);
+    void subfunction_sql_save_tiles(tile t, int id);
+    void function_sql_close_connection();
+    void function_sql_fin_stmt();
+    void subfunction_sql_ls_tiles(chunk *ch, int function);
+
+    void subfunction_sql_load_tiles(chunk *ch, int k, int l);
 };
