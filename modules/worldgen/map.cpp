@@ -3,15 +3,19 @@
 #include <iostream>
 constexpr int var_mapsize = constants::mapsize;
 constexpr int var_chunksize = constants::chunksize;
+constexpr int var_seed = constants::seed;
 sqlite3 *db;
 sqlite3_stmt *stmt;
 char *zErrMsg = 0;
 int rc;
 world_map::world_map() {
+    // init noise settings;
+    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    noise.SetSeed(var_seed);
     auto code = function_sql_conn_check();
     if (code ==0)
     {
-        function_create_map(); 
+        function_create_map();
         return;
     }else{
         //int 0 save map;
@@ -20,7 +24,7 @@ world_map::world_map() {
     }
 }
 void world_map::function_create_map(){
-        for (int k = 0; k < var_mapsize; ++k) {
+    for (int k = 0; k < var_mapsize; ++k) {
         for (int l = 0; l < var_mapsize; ++l) {
             chunk_map.emplace(std::tuple((int)k*var_chunksize,(int)l*var_chunksize),chunk({(float)k*var_chunksize,(float )l*var_chunksize}));
             for (int x = 0; x< var_chunksize;++x)
@@ -65,10 +69,10 @@ object_type world_map::assign_obj(terrain_type var_terrain)
     switch (var_terrain) {
         case terrain_type::hills:
             return object_type::Hill;
-            case terrain_type::forest:
-                return object_type::Forest;
-                default:
-                    return object_type::NONE;
+        case terrain_type::forest:
+            return object_type::Forest;
+        default:
+            return object_type::NONE;
     };
 }
 static int callback(void *count, int argc, char **argv, char **azColName) {

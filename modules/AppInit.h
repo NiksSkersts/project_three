@@ -13,7 +13,7 @@ public:
     AppInit();
 private:
     void initCamera();
-    void gameLoop(content_manager manager);
+    void gameLoop(content_manager &manager);
     Camera2D camera2D;
     void update();
     const char * function_get_current_obj();
@@ -22,4 +22,8 @@ private:
     void function_draw_ui(content_manager manager);
     void function_call_draw_texture(Texture2D texture, float x, float y,Color col);
     uint function_check_button_boundaries();
+
+    void function_get_keypress();
+
+    bool function_map_should_update();
 };
