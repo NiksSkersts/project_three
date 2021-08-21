@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 #set vars
 set(TARGET_NAME project_two)
 project(${TARGET_NAME} VERSION 0.0.1 DESCRIPTION "Project Description")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(HEADER_FILES modules/AppInit.h modules/worldgen/tile.h modules/worldgen/terrain_type.h modules/worldgen/chunk.h modules/worldgen/object_type.h modules/worldgen/map.h modules/ui/game_ui.h modules/ui/button.h modules/content/content_manager.h modules/ui/button_type.h)

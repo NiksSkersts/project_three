@@ -4,9 +4,10 @@
 #include <vector>
 #include <iostream>
 using namespace std;
-world_map worldMap;
-vector<chunk> map_queue;
-game_ui gm;
+using namespace main_logic;
+worldgen::world_map worldMap;
+vector<worldgen::chunk> map_queue;
+ui::game_ui gm;
 bool reload_map = true;
 Vector2 old_coordinates = {0,0};
 int var_upd_range = 100;
@@ -27,19 +28,19 @@ AppInit::AppInit()
     if (height == 0)
         height = 1000;
     InitWindow(width, height, "project_two");
-    content_manager cm;
+    content::content_manager cm;
     initCamera();
     gameLoop(cm);
 }
 void AppInit::initCamera()
 // Camera init
 {
-    camera2D.target = {GetScreenWidth() + 20.0f, GetScreenHeight() + 20.0f};
+    camera2D.target = {GetScreenWidth() + 2000.0f, GetScreenHeight() + 2000.0f};
     camera2D.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     camera2D.rotation = 0.0f;
     camera2D.zoom = 2.0f;
 }
-void AppInit::gameLoop(content_manager &manager)
+void AppInit::gameLoop(content::content_manager &manager)
 // Base gameloop and de-init when the while loop breaks;
 {
     map_queue.reserve(16);
@@ -123,7 +124,7 @@ void AppInit::function_get_keypress(){
     }
 
 }
-void AppInit::draw(content_manager manager)
+void AppInit::draw(content::content_manager manager)
 // Draw part of the loop. Rendering part
 {
     ClearBackground(BLACK);
@@ -136,22 +137,22 @@ void AppInit::draw(content_manager manager)
                 auto t = *chk.tiles_in_chunk[i][j];
                 switch (t.type)
                 {
-                    case terrain_type::grass:
+                    case worldgen::terrain_type::grass:
                         function_call_draw_texture(manager.grass_texture,
                                                    (t.coordinates.x * var_tilesize),
                                                    (t.coordinates.y * var_tilesize), WHITE);
                         break;
-                    case terrain_type::water:
+                    case worldgen::terrain_type::water:
                         function_call_draw_texture(manager.water_texture,
                                                    (t.coordinates.x * var_tilesize),
                                                    (t.coordinates.y * var_tilesize), WHITE);
                         break;
-                    case terrain_type::hills:
+                    case worldgen::terrain_type::hills:
                         function_call_draw_texture(manager.grass_texture,
                                                    (t.coordinates.x * var_tilesize),
                                                    (t.coordinates.y * var_tilesize), WHITE);
                         break;
-                    case terrain_type::forest:
+                    case worldgen::terrain_type::forest:
                         // temp
                         function_call_draw_texture(manager.grass_texture,
                                                    (t.coordinates.x * var_tilesize),
@@ -160,11 +161,11 @@ void AppInit::draw(content_manager manager)
                 }
                 switch (t.obj)
                 {
-                    case object_type::NONE:
+                    case worldgen::object_type::NONE:
                         break;
-                    case object_type::Forest:
+                    case worldgen::object_type::Forest:
                         break;
-                    case object_type::Hill:
+                    case worldgen::object_type::Hill:
                         DrawTexture(manager.mountain_texture,
                                     (t.coordinates.x * var_tilesize),
                                     (t.coordinates.y * var_tilesize), Fade(WHITE, 1.0f));
@@ -196,17 +197,17 @@ const char *AppInit::function_get_current_obj()
             auto z = *chk.tiles_in_chunk[coord_x][coord_y];
             switch (z.obj)
             {
-                case object_type::NONE:
+                case worldgen::object_type::NONE:
                     break;
-                case object_type::Hill:
+                case worldgen::object_type::Hill:
                     return "hill";
-                case object_type::Forest:
+                case worldgen::object_type::Forest:
                     return "forest";
             }
         }
     return "No objects found";
 }
-void AppInit::function_draw_ui(content_manager manager)
+void AppInit::function_draw_ui(content::content_manager manager)
 {
     DrawFPS(10, 10);
     DrawText(to_string(GetFrameTime()).c_str(),10,30,14,WHITE);
@@ -218,7 +219,7 @@ void AppInit::function_draw_ui(content_manager manager)
     {
         switch (buttons.buttonType)
         {
-            case button_type::button_build:
+            case ui::button_type::button_build:
                 function_call_draw_texture(manager.button_build_texture,
                                            buttons.location.x,
                                            height + buttons.location.y, WHITE);

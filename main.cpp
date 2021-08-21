@@ -1,6 +1,6 @@
 #include "modules/AppInit.h"
 int main()
 {
-    AppInit app;
+    main_logic::AppInit app;
     return 0;
 }

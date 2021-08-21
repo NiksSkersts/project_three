@@ -1,6 +1,8 @@
 #pragma once
-enum class object_type {
-    NONE,
-    Hill,
-    Forest
-};
+namespace worldgen{
+    enum class object_type {
+        NONE,
+        Hill,
+        Forest
+    };
+}

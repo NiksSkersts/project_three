@@ -1,9 +1,10 @@
 #include <tuple>
 #include "map.h"
 #include <iostream>
-constexpr int var_mapsize = constants::mapsize;
-constexpr int var_chunksize = constants::chunksize;
-constexpr int var_seed = constants::seed;
+using namespace worldgen;
+constexpr int var_mapsize = main_logic::constants::mapsize;
+constexpr int var_chunksize = main_logic::constants::chunksize;
+constexpr int var_seed = main_logic::constants::seed;
 sqlite3 *db;
 sqlite3_stmt *stmt;
 char *zErrMsg = 0;
@@ -16,12 +17,12 @@ world_map::world_map() {
     if (code ==0)
     {
         function_create_map();
-        return;
     }else{
         //int 0 save map;
         //int 1 load map;
         function_sql_map(1);
     }
+    function_dynamic_tiles();
 }
 void world_map::function_create_map(){
     for (int k = 0; k < var_mapsize; ++k) {
@@ -46,8 +47,38 @@ void world_map::function_create_map(){
                         var_obj = assign_obj(var_terrain);
                     chunk_map.find(std::tuple((int)k*var_chunksize,(int)l*var_chunksize))->second.tiles_in_chunk[x][y] = new tile(var_coords,var_terrain,var_humidity,var_temperature,var_obj);
                 }
+
         }
     }
+}
+void world_map::function_dynamic_tiles(){
+    for (int k = 0; k < var_mapsize ; ++k)
+        for (int l = 0; l < var_mapsize; ++l) {
+            auto ch = chunk_map.find(std::tuple(k*var_chunksize,l*var_chunksize));
+            for (int i = 0; i < var_chunksize; ++i)
+                for (int j = 0; j < var_chunksize; ++j) {
+                    auto t =ch->second.tiles_in_chunk[i][j];
+                    for (int m = t->coordinates.x-1; m < t->coordinates.x+2; ++m)
+                        for (int n = t->coordinates.y-1; n < t->coordinates.y+2; ++n) {
+                            auto ch_comp = chunk_map.find(std::tuple((int)var_chunksize*(m/var_chunksize),(int)var_chunksize*(n/var_chunksize)));
+                            auto ch_sub = ch->second.tiles_in_chunk;
+                            if (ch->first!=ch_comp->first)
+                                ch_sub = ch_comp->second.tiles_in_chunk;
+                            int m_1 = m;
+                            int n_1 = n;
+                            if (m<0) m_1 = 0;
+                            if (n<0) n_1 = 0;
+                            if (m > 31)
+                                m_1=m-(var_chunksize*(m/var_chunksize));
+                            if (n>31)
+                                n_1=n-(var_chunksize*(n/var_chunksize));
+                            auto t1 = ch_sub[m_1][n_1];
+                            if (t1 == nullptr) t1 = ch->second.tiles_in_chunk[(int)t->coordinates.x][(int)t->coordinates.y];
+                            t->render_layers.push_back(static_cast<int>(t1->type));
+                        }
+
+                }
+        }
 }
 terrain_type world_map::assign_terrain(float z, float hum, float temp) {
     if (z <= 0) return terrain_type::water;

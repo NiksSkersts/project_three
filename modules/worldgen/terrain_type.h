@@ -1,7 +1,9 @@
 #pragma once
-enum class terrain_type{
-    grass,
-    water,
-    hills,
-    forest
-        };
+namespace worldgen{
+    enum class terrain_type {
+        grass,
+        water,
+        hills,
+        forest
+    };
+}
