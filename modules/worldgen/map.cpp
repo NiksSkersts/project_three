@@ -1,18 +1,10 @@
-#include <tuple>
 #include "map.h"
-#include <iostream>
 using namespace worldgen;
-constexpr int var_mapsize = main_logic::constants::mapsize;
-constexpr int var_chunksize = main_logic::constants::chunksize;
-constexpr int var_seed = main_logic::constants::seed;
 sqlite3 *db;
 sqlite3_stmt *stmt;
 char *zErrMsg = 0;
 int rc;
 world_map::world_map() {
-    // init noise settings;
-    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    noise.SetSeed(var_seed);
     auto code = function_sql_conn_check();
     if (code ==0)
     {
@@ -22,89 +14,13 @@ world_map::world_map() {
         //int 1 load map;
         function_sql_map(1);
     }
-    function_dynamic_tiles();
 }
 void world_map::function_create_map(){
     for (int k = 0; k < var_mapsize; ++k) {
         for (int l = 0; l < var_mapsize; ++l) {
             chunk_map.emplace(std::tuple((int)k*var_chunksize,(int)l*var_chunksize),chunk({(float)k*var_chunksize,(float )l*var_chunksize}));
-            for (int x = 0; x< var_chunksize;++x)
-                for(int y = 0; y<var_chunksize;++y)
-                {
-                    Vector2 s_cords = {(float)(k*var_chunksize)+x,(float)(l*var_chunksize)+y};
-                    //sec_check if var noise ! x>= -1  AND !x <= 1 : Do it again.
-                    sec_check:
-                    float var_noise = noise.GetNoise((float)s_cords.x,(float)s_cords.y);
-                    if ((var_noise>=-1 && var_noise <=1)!= true) goto sec_check;
-                    //3D vector coords rounded to nearest integer, except for z as it will always be -1>=x<=1;
-                    Vector3 var_coords = {roundf(s_cords.x),roundf(s_cords.y),var_noise};
-                    float var_temperature = assign_temp(var_noise);
-                    float var_humidity = assign_hum(var_noise,var_temperature);
-                    terrain_type var_terrain = assign_terrain(var_noise,var_humidity,var_temperature);
-                    //objects that are added on world creation - e.g trees;
-                    object_type var_obj = object_type::NONE;
-                    if (var_terrain==terrain_type::forest || var_terrain==terrain_type::hills)
-                        var_obj = assign_obj(var_terrain);
-                    chunk_map.find(std::tuple((int)k*var_chunksize,(int)l*var_chunksize))->second.tiles_in_chunk[x][y] = new tile(var_coords,var_terrain,var_humidity,var_temperature,var_obj);
-                }
-
         }
     }
-}
-void world_map::function_dynamic_tiles(){
-    for (int k = 0; k < var_mapsize ; ++k)
-        for (int l = 0; l < var_mapsize; ++l) {
-            auto ch = chunk_map.find(std::tuple(k*var_chunksize,l*var_chunksize));
-            for (int i = 0; i < var_chunksize; ++i)
-                for (int j = 0; j < var_chunksize; ++j) {
-                    auto t =ch->second.tiles_in_chunk[i][j];
-                    for (int m = t->coordinates.x-1; m < t->coordinates.x+2; ++m)
-                        for (int n = t->coordinates.y-1; n < t->coordinates.y+2; ++n) {
-                            auto ch_comp = chunk_map.find(std::tuple((int)var_chunksize*(m/var_chunksize),(int)var_chunksize*(n/var_chunksize)));
-                            auto ch_sub = ch->second.tiles_in_chunk;
-                            if (ch->first!=ch_comp->first)
-                                ch_sub = ch_comp->second.tiles_in_chunk;
-                            int m_1 = m;
-                            int n_1 = n;
-                            if (m<0) m_1 = 0;
-                            if (n<0) n_1 = 0;
-                            if (m > 31)
-                                m_1=m-(var_chunksize*(m/var_chunksize));
-                            if (n>31)
-                                n_1=n-(var_chunksize*(n/var_chunksize));
-                            auto t1 = ch_sub[m_1][n_1];
-                            if (t1 == nullptr) t1 = ch->second.tiles_in_chunk[(int)t->coordinates.x][(int)t->coordinates.y];
-                            t->render_layers.push_back(static_cast<int>(t1->type));
-                        }
-
-                }
-        }
-}
-terrain_type world_map::assign_terrain(float z, float hum, float temp) {
-    if (z <= 0) return terrain_type::water;
-    if (hum > 0 && temp > 0 && z < 0.5) return  terrain_type::grass;
-    if(z >= 0.5) return terrain_type::hills;
-    return terrain_type::grass;
-}
-float world_map::assign_temp(float z)
-{
-    return cosf(z);
-}
-float world_map::assign_hum(float z, float temp)
-{
-    return ((temp*z+1)/(2));
-}
-object_type world_map::assign_obj(terrain_type var_terrain)
-//todo implement object_type::forest && terrain_type::forest
-{
-    switch (var_terrain) {
-        case terrain_type::hills:
-            return object_type::Hill;
-        case terrain_type::forest:
-            return object_type::Forest;
-        default:
-            return object_type::NONE;
-    };
 }
 static int callback(void *count, int argc, char **argv, char **azColName) {
     int *c = static_cast<int *>(count);
@@ -185,7 +101,7 @@ void world_map::function_sql_fin_stmt(){
 void world_map::subfunction_sql_ls_tiles(chunk *ch, int function) {
     for (int k =0;k<32;++k)
         for(int l=0;l<32;++l){
-            if (function==0) subfunction_sql_save_tiles(*ch->tiles_in_chunk[k][l],ch->chunk_id);
+            if (function==0) subfunction_sql_save_tiles(ch->tiles_in_chunk[k][l],ch->chunk_id);
             if (function==1) subfunction_sql_load_tiles(ch,k,l);
         }
 }
@@ -214,7 +130,7 @@ void world_map::subfunction_sql_load_tiles(chunk *ch, int k, int l) {
     auto type= static_cast<terrain_type>(sqlite3_column_int(stmt,5));
     auto hum = (float)sqlite3_column_double(stmt,6);
     auto temp = (float)sqlite3_column_double(stmt,7);
-    ch->tiles_in_chunk[k][l] = new tile(coords,type,hum,temp,obj);
+    ch->tiles_in_chunk[k][l] = tile(coords,type,hum,temp,obj);
     function_sql_fin_stmt();
 }
 void world_map::function_sql_create_db()

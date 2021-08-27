@@ -28,7 +28,7 @@ namespace content{
         {
             //images
             grass = LoadImage("../assets/png/grass/grass_sprite_sheet.png");
-            water = LoadImage("../assets/png/water_sprite_sheet.png");
+            water = LoadImage("../assets/png/water/water_sprite_sheet.png");
             mountain = LoadImage("../assets/png/mountain.png");
             //button_images
             button_build_img = LoadImage("../assets/png/button_build.png");

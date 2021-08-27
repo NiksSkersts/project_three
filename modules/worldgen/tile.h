@@ -1,24 +1,41 @@
 #include <raylib.h>
-#include "terrain_type.h"
+#include <utils/FastNoiseLite.h>
+#include <vector>
 #include "object_type.h"
+#include "terrain_type.h"
+#include <cmath>
 namespace worldgen{
     class tile{
+    private:
+         FastNoiseLite noise;
+         void function_init_noise_settings();
+         float assign_height(Vector2 coords);
+         float assign_temp(float z);
+         float assign_hum(float z, float temp);
+         terrain_type assign_terrain(float z, float hum, float temp);
+         object_type assign_obj(terrain_type var_terrain);
     public:
-        tile(Vector3 coordinates,terrain_type terrainType,float hum,float temp,object_type obj) {
-            this->coordinates=coordinates;
-            this->type = terrainType;
-            this->humidity = hum;
-            this->temperature = temp;
-            this->obj = obj;
-        }
+        //loading from db
+        tile(Vector3 coords, terrain_type t_type, float hum, float temp, object_type obj_type);
+        //creating from scratch
+        tile(Vector2 coords);
+        //default constructor for std::array
+        tile();
+        //size of a single square tile. Size represents a px!
+        static constexpr size_t tilesize {32};
+        //coordinates of tile uppermost left corner. Inverse Matrix, thus -y is up and +y is below.
+        // z represents height. 0 is middle point. x<0 = water and x>0 is land and later hills. Z range [-1;1]
         Vector3 coordinates;
+        //A single tile can have a single terrain type. E.g grass.
         terrain_type type;
+        //A single tile can host a single object. I am going for that retro feel, like an old CIV game.
         object_type obj;
+        //humidity depends on temperature and height.
         float humidity;
+        //depends on height.
         float temperature;
         //render layers is for dynamic tiles. Tile is split into 9x9 currently represented by squares.
+        std::vector<Texture2D> render_layers;
         //todo graphics update after important things are done
-        std::vector<int> render_layers;
-
-    };
+     };
 }

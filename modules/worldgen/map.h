@@ -1,22 +1,23 @@
 #include <cmath>
-#include <utils/FastNoiseLite.h>
 #include <map>
-#include "chunk.h"
-#include "../../constants.h"
 #include <stdio.h>
 #include <sqlite3.h>
 #include <string.h>
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <tuple>
+#include "chunk.h"
+
 namespace worldgen{
     class world_map {
     public:
         world_map();
         void function_create_map();
         std::map<std::tuple<int,int>,chunk> chunk_map;
-        FastNoiseLite noise;
         void function_sql_map(int function);
+        static constexpr int var_mapsize {32};
+        int var_chunksize = chunk::var_chunksize;
     private:
         //todo create db if (db!=exist)
         void function_sql_create_db();
@@ -28,10 +29,6 @@ namespace worldgen{
                 char**,   /* An array of strings representing fields in the row */
                 char**    /* An array of strings representing column names */
                 );
-        terrain_type assign_terrain(float z, float hum, float temp);
-        float assign_temp(float z);
-        float assign_hum(float z, float temp);
-        object_type assign_obj(terrain_type var_terrain);
         void function_sql_open_connection();
         void subfunction_sql_save_chunk(chunk chunk);
         void subfunction_sql_ls_chunk(int function);
@@ -40,6 +37,5 @@ namespace worldgen{
         void function_sql_fin_stmt();
         void subfunction_sql_ls_tiles(chunk *ch, int function);
         void subfunction_sql_load_tiles(chunk *ch, int k, int l);
-        void function_dynamic_tiles();
     };
 }

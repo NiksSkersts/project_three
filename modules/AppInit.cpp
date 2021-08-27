@@ -1,21 +1,15 @@
 #include "AppInit.h"
-#include <raylib.h>
-#include <thread>
-#include <vector>
-#include <iostream>
 using namespace std;
 using namespace main_logic;
 worldgen::world_map worldMap;
 vector<worldgen::chunk> map_queue;
 ui::game_ui gm;
-bool reload_map = true;
-Vector2 old_coordinates = {0,0};
-int var_upd_range = 100;
-constexpr int var_chunksize = constants::chunksize;
-constexpr int var_mapsize = constants::mapsize;
-constexpr int var_seed = constants::seed;
-constexpr int var_fps = constants::FPS;
-constexpr int var_tilesize = constants::tilesize;
+bool reload_map {true};
+Vector2 old_coordinates{0,0};
+int var_upd_range{100};
+constexpr int var_chunksize {worldgen::chunk::var_chunksize};
+constexpr int var_mapsize {worldgen::world_map::var_mapsize};
+constexpr int var_fps {240};
 AppInit::AppInit()
 // Opengl window init, map init and some basic config;
 // Textures must be handled after OpenGL init!
@@ -35,10 +29,10 @@ AppInit::AppInit()
 void AppInit::initCamera()
 // Camera init
 {
-    camera2D.target = {GetScreenWidth() + 2000.0f, GetScreenHeight() + 2000.0f};
+    camera2D.target = {0,0};
     camera2D.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     camera2D.rotation = 0.0f;
-    camera2D.zoom = 2.0f;
+    camera2D.zoom = 5.0f;
 }
 void AppInit::gameLoop(content::content_manager &manager)
 // Base gameloop and de-init when the while loop breaks;
@@ -94,7 +88,13 @@ void AppInit::function_add_chunks_to_queue()
         }
 }
 bool AppInit::function_map_should_update(){
-    if(camera2D.target.x>old_coordinates.x+var_upd_range || camera2D.target.x<old_coordinates.x-var_upd_range || camera2D.target.y>old_coordinates.y+var_upd_range || camera2D.target.y<old_coordinates.y-var_upd_range){
+    if(old_coordinates.x == 0 && old_coordinates.y == 0 && map_queue.empty()){
+        return true;
+    }
+    if(camera2D.target.x>old_coordinates.x+var_upd_range ||
+            camera2D.target.x<old_coordinates.x-var_upd_range ||
+            camera2D.target.y>old_coordinates.y+var_upd_range ||
+            camera2D.target.y<old_coordinates.y-var_upd_range){
         old_coordinates = camera2D.target;
         return true;
     }
@@ -131,44 +131,36 @@ void AppInit::draw(content::content_manager manager)
     BeginDrawing();
     BeginMode2D(camera2D);
     for (auto chk : map_queue)
-        for (int i = 0; i < var_chunksize; ++i)
-            for (int j = 0; j < var_chunksize; ++j)
-            {
-                auto t = *chk.tiles_in_chunk[i][j];
-                switch (t.type)
-                {
+        for (int x =0;x<var_chunksize;++x)
+            for(int y =0;y<var_chunksize;++y){
+                auto t = chk.tiles_in_chunk[x][y];
+                switch (t.type) {
                     case worldgen::terrain_type::grass:
-                        function_call_draw_texture(manager.grass_texture,
-                                                   (t.coordinates.x * var_tilesize),
-                                                   (t.coordinates.y * var_tilesize), WHITE);
+                        DrawTextureRec(manager.grass_texture,{0,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{32,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{64,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{96,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{128,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{160,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{192,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{224,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.grass_texture,{256,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
                         break;
                     case worldgen::terrain_type::water:
-                        function_call_draw_texture(manager.water_texture,
-                                                   (t.coordinates.x * var_tilesize),
-                                                   (t.coordinates.y * var_tilesize), WHITE);
+                        DrawTextureRec(manager.water_texture,{0,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{32,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{64,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{96,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{128,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{160,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{192,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{224,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
+                        DrawTextureRec(manager.water_texture,{256,0,32,32},{t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize},WHITE);
                         break;
                     case worldgen::terrain_type::hills:
-                        function_call_draw_texture(manager.grass_texture,
-                                                   (t.coordinates.x * var_tilesize),
-                                                   (t.coordinates.y * var_tilesize), WHITE);
+                        DrawTexture(manager.mountain_texture,t.coordinates.x*t.tilesize,t.coordinates.y*t.tilesize,WHITE);
                         break;
                     case worldgen::terrain_type::forest:
-                        // temp
-                        function_call_draw_texture(manager.grass_texture,
-                                                   (t.coordinates.x * var_tilesize),
-                                                   (t.coordinates.y * var_tilesize), WHITE);
-                        break;
-                }
-                switch (t.obj)
-                {
-                    case worldgen::object_type::NONE:
-                        break;
-                    case worldgen::object_type::Forest:
-                        break;
-                    case worldgen::object_type::Hill:
-                        DrawTexture(manager.mountain_texture,
-                                    (t.coordinates.x * var_tilesize),
-                                    (t.coordinates.y * var_tilesize), Fade(WHITE, 1.0f));
                         break;
                 }
             }
@@ -176,6 +168,13 @@ void AppInit::draw(content::content_manager manager)
     // functions
     function_draw_ui(manager);
     EndDrawing();
+}
+void AppInit::function_draw_map(content::content_manager manager,worldgen::tile tile){
+    for(int x = tile.coordinates.x-1;x<tile.coordinates.x+2;++x){
+        for(int y = tile.coordinates.x-1;y<tile.coordinates.y+2;++y){
+            //auto ch_comp = map_queue.find(std::tuple((int)var_chunksize*(x/var_chunksize),(int)var_chunksize*(y/var_chunksize)));
+        }
+    }
 }
 const char *AppInit::function_get_current_obj()
 // Gets current tile based on ScreenToWorld coords and return the object that's
@@ -194,7 +193,7 @@ const char *AppInit::function_get_current_obj()
         if (chk.starting_coordinates.x == (float)chunk_x * var_chunksize &&
             chk.starting_coordinates.y == (float)chunk_y * var_chunksize)
         {
-            auto z = *chk.tiles_in_chunk[coord_x][coord_y];
+            auto z = chk.tiles_in_chunk[coord_x][coord_y];
             switch (z.obj)
             {
                 case worldgen::object_type::NONE:
@@ -215,17 +214,6 @@ void AppInit::function_draw_ui(content::content_manager manager)
         auto object_draw_text = std::async(std::launch::deferred,&AppInit::function_get_current_obj, this);
         DrawText(object_draw_text.get(), 10, 40, 40, WHITE);
     }
-    for (auto buttons : gm.button_storage)
-    {
-        switch (buttons.buttonType)
-        {
-            case ui::button_type::button_build:
-                function_call_draw_texture(manager.button_build_texture,
-                                           buttons.location.x,
-                                           height + buttons.location.y, WHITE);
-                break;
-        }
-    }
 }
 uint AppInit::function_check_button_boundaries()
 {
@@ -239,9 +227,4 @@ uint AppInit::function_check_button_boundaries()
             return bttn.id;
     }
     return 0;
-}
-void AppInit::function_call_draw_texture(Texture2D texture, float x, float y, Color col)
-// todo add more common code on draw
-{
-    DrawTexture(texture, x, y, col);
 }
