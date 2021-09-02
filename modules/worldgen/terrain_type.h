@@ -4,6 +4,7 @@ namespace worldgen{
         grass,
         water,
         hills,
-        forest
+        forest,
+        border
     };
 }

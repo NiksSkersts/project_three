@@ -1,5 +1,3 @@
-#include "raylib.h"
-
 namespace content{
     class content_manager{
     public:
@@ -13,31 +11,34 @@ namespace content{
             UnloadTexture(mountain_texture);
         }
         //images
+        Image border;
         Image grass;
         Image water;
         Image mountain;
         Image button_build_img;
         //textures
+        Texture2D border_texture;
         Texture2D grass_texture;
         Texture2D water_texture;
         Texture2D mountain_texture;
         Texture2D button_build_texture;
-    private:
         void function_load_textures()
         //Load textures on app init;
         {
             //images
-            grass = LoadImage("../assets/png/grass/grass_sprite_sheet.png");
-            water = LoadImage("../assets/png/water/water_sprite_sheet.png");
+            border = GenImageColor(32,32,WHITE);
+            grass = LoadImage("../assets/png/grass.png");
+            water = LoadImage("../assets/png/water.png");
             mountain = LoadImage("../assets/png/mountain.png");
             //button_images
             button_build_img = LoadImage("../assets/png/button_build.png");
             //textures
-            grass_texture = LoadTextureFromImage(grass);//atlas
-            water_texture = LoadTextureFromImage(water);//atlas
-            mountain_texture = LoadTextureFromImage(mountain);//single
+            border_texture = LoadTextureFromImage(border);
+            grass_texture = LoadTextureFromImage(grass);
+            water_texture = LoadTextureFromImage(water);
+            mountain_texture = LoadTextureFromImage(mountain);
             //button_textures
-            button_build_texture = LoadTextureFromImage(button_build_img);//single
+            button_build_texture = LoadTextureFromImage(button_build_img);
             //unload - img no longer needed;
             UnloadImage(grass);
             UnloadImage(water);

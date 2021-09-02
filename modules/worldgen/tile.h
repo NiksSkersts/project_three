@@ -1,9 +1,11 @@
-#include <raylib.h>
 #include <utils/FastNoiseLite.h>
-#include <vector>
+#include <raylib.h>
 #include "object_type.h"
 #include "terrain_type.h"
+#include "modules/content/content_manager.h"
 #include <cmath>
+#include <memory>
+
 namespace worldgen{
     class tile{
     private:
@@ -17,10 +19,10 @@ namespace worldgen{
     public:
         //loading from db
         tile(Vector3 coords, terrain_type t_type, float hum, float temp, object_type obj_type);
+        //creating border
+        tile(Vector2 coords, bool border);
         //creating from scratch
         tile(Vector2 coords);
-        //default constructor for std::array
-        tile();
         //size of a single square tile. Size represents a px!
         static constexpr size_t tilesize {32};
         //coordinates of tile uppermost left corner. Inverse Matrix, thus -y is up and +y is below.
@@ -34,8 +36,5 @@ namespace worldgen{
         float humidity;
         //depends on height.
         float temperature;
-        //render layers is for dynamic tiles. Tile is split into 9x9 currently represented by squares.
-        std::vector<Texture2D> render_layers;
-        //todo graphics update after important things are done
      };
 }

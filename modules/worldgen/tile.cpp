@@ -1,5 +1,4 @@
 #include "tile.h"
-worldgen::tile::tile() {}
 worldgen::tile::tile(Vector2 coords) {
     function_init_noise_settings();
     this->coordinates = {coords.x,coords.y,assign_height(coords)};
@@ -7,6 +6,10 @@ worldgen::tile::tile(Vector2 coords) {
     this->humidity = assign_hum(this->coordinates.z, this->temperature);
     this->type = assign_terrain(this->coordinates.z, this->humidity, this->temperature);
     this->obj = assign_obj(this->type);
+}
+worldgen::tile::tile(Vector2 coords, bool) {
+    this->coordinates = {coords.x,coords.y,0};
+    this->type = terrain_type::border;
 }
 worldgen::tile::tile(Vector3 coords, worldgen::terrain_type t_type, float hum, float temp,object_type obj_type) {
     this->coordinates = coords;
