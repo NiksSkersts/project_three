@@ -4,6 +4,9 @@
 namespace ui{
     class button{
     public:
+        enum button_type{
+            button_build
+        };
         button(int id, button_type btn,Vector2 loc,int size){
             this->id=id;
             //ident for filtering the correct button;

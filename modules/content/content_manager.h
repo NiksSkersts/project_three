@@ -1,16 +1,9 @@
+//Place define here - first header in the chain
+#define DEBUG_MODE  true
+
 namespace content{
     class content_manager{
     public:
-        content_manager(){
-            function_load_textures();
-        }
-        void function_unload_textures(){
-            UnloadTexture(grass_texture);
-            UnloadTexture(water_texture);
-            UnloadTexture(button_build_texture);
-            UnloadTexture(mountain_texture);
-            UnloadTexture(border_texture);
-        }
         //images
         Image border;
         Image grass;
@@ -23,6 +16,17 @@ namespace content{
         Texture2D water_texture;
         Texture2D mountain_texture;
         Texture2D button_build_texture;
+
+        content_manager(){
+            function_load_textures();
+        }
+        void function_unload_textures(){
+            UnloadTexture(grass_texture);
+            UnloadTexture(water_texture);
+            UnloadTexture(button_build_texture);
+            UnloadTexture(mountain_texture);
+            UnloadTexture(border_texture);
+        }
         void function_load_textures()
         //Load textures on app init;
         {
