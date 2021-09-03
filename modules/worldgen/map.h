@@ -13,6 +13,6 @@ namespace worldgen{
         void function_create_map(content::content_manager &manager);
         std::map<unsigned long long int,std::pair<std::unique_ptr<chunk>,std::unique_ptr<chunk_texture_map>>> chunk_and_texture_map;
     private:
-        border_chunk function_determine_border(int k, int l);
+        chunk::border_chunk function_determine_border(int k, int l);
     };
 }

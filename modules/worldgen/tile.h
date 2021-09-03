@@ -1,7 +1,5 @@
 #include <utils/FastNoiseLite.h>
 #include <raylib.h>
-#include "object_type.h"
-#include "terrain_type.h"
 #include "modules/content/content_manager.h"
 #include <cmath>
 #include <memory>
@@ -9,6 +7,19 @@
 namespace worldgen {
     class tile {
     public:
+        enum terrain_type{
+            grass,
+            water,
+            hills,
+            forest,
+            border
+        };
+        enum object_type {
+            NONE,
+            Hill,
+            Forest
+        };
+
         //constructors
         //loading from db
         tile(Vector3 coords, terrain_type t_type, float hum, float temp, object_type obj_type);

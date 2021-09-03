@@ -1,4 +1,3 @@
-#include "border_chunk.h"
 #include "tile.h"
 #include <string>
 #include <iostream>
@@ -7,6 +6,18 @@
 namespace worldgen{
     class chunk {
     public:
+        enum border_chunk{
+            upper_left_corner,
+            left,
+            bottom_left_corner,
+            up,
+            bottom,
+            upper_right_corner,
+            right,
+            bottom_right_corner,
+            none
+        };
+
         chunk(Vector2 coords, border_chunk border);
 
         static constexpr int var_chunksize{32};
@@ -29,10 +40,10 @@ namespace worldgen{
             for (int i = 0; i < chunk.var_chunksize; ++i) {
                 for (int j = 0; j < chunk.var_chunksize; ++j) {
                     switch(chunk.tiles_in_chunk[i][j]->type) {
-                        case terrain_type::water:
+                        case tile::terrain_type::water:
                             texture_map[i][j] = &contentManager.water_texture;
                             break;
-                        case terrain_type::border:
+                        case tile::terrain_type::border:
                             texture_map[i][j] = &contentManager.border_texture;
                             break;
                         default:
@@ -40,10 +51,10 @@ namespace worldgen{
                             break;
                     }
                     switch(chunk.tiles_in_chunk[i][j]->obj) {
-                        case object_type::Hill:
+                        case tile::object_type::Hill:
                             object_map[i][j] = &contentManager.mountain_texture;
                             break;
-                        case object_type::Forest:
+                        case tile::object_type::Forest:
                             // todo implement forest
                             object_map[i][j] = nullptr;
                             break;

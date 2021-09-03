@@ -1,5 +1,5 @@
 #include "tile.h"
-worldgen::tile::tile(Vector3 coords, worldgen::terrain_type t_type, float hum, float temp,object_type obj_type) {
+worldgen::tile::tile(Vector3 coords, terrain_type t_type, float hum, float temp,object_type obj_type) {
     this->coordinates = coords;
     this->temperature = temp;
     this->humidity = hum;
@@ -30,7 +30,7 @@ float worldgen::tile::assign_height(Vector2 coords){
     if ((var_noise>=-1 && var_noise <=1)!= true) goto sec_check;
     return var_noise;
 }
-worldgen::terrain_type worldgen::tile::assign_terrain(float z, float hum, float temp) {
+worldgen::tile::terrain_type worldgen::tile::assign_terrain(float z, float hum, float temp) {
     if (z <= 0) return terrain_type::water;
     if (hum > 0 && temp > 0 && z < 0.5) return  terrain_type::grass;
     if(z >= 0.5) return terrain_type::hills;
@@ -44,7 +44,7 @@ float worldgen::tile::assign_hum(float z, float temp)
 {
     return ((temp*z+1)/(2));
 }
-worldgen::object_type worldgen::tile::assign_obj(terrain_type var_terrain)
+worldgen::tile::object_type worldgen::tile::assign_obj(terrain_type var_terrain)
 //todo implement object_type::forest && terrain_type::forest
 {
     switch (var_terrain) {

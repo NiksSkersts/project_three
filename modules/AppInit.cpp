@@ -121,7 +121,7 @@ void AppInit::draw()
                     auto tile = map_temp_storage[i].first[j]->tiles_in_chunk[x][y].get();
                     auto obj = map_temp_storage[i].second[j]->object_map[x][y];
                     DrawTexture(*texture,tile->coordinates.x*tile->tilesize,tile->coordinates.y*tile->tilesize,WHITE);
-                    if(obj!= nullptr && tile->type!=worldgen::terrain_type::border)
+                    if(obj!= nullptr && tile->type!=worldgen::tile::terrain_type::border)
                         DrawTexture(*obj,tile->coordinates.x*tile->tilesize,tile->coordinates.y*tile->tilesize,WHITE);
                     DrawText(to_string((int)tile->coordinates.x).append(to_string((int)tile->coordinates.y)).c_str(),tile->coordinates.x*tile->tilesize,tile->coordinates.y*tile->tilesize,12,WHITE);
                 }
