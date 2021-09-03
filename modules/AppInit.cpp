@@ -14,17 +14,13 @@ inline void AppInit::base_settings(){
     SetTargetFPS(var_fps);
     SetExitKey(27);
 }
-inline void AppInit::init_camera()
-// Camera init
-{
+inline void AppInit::init_camera(){
     camera2D.target = {0,0};
     camera2D.offset = {GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f};
     camera2D.rotation = 0.0f;
     camera2D.zoom = 1.0f;
 }
-inline void AppInit::game_loop()
-// Base gameloop and de-init when the while loop breaks;
-{
+inline void AppInit::game_loop(){
     content::content_manager contentManager;
     auto world = worldgen::world_map(contentManager);
     while (!WindowShouldClose()){
@@ -37,9 +33,8 @@ inline void AppInit::game_loop()
     CloseWindow();
 }
 void AppInit::update(worldgen::world_map &map)
-// Update part of the loop. For variables, camera  updates and so on;
+//Update part of the loop. For variables, camera  updates and so on;
 {
-    //update variables
     width = GetScreenWidth();
     height = GetScreenHeight();
     //functions
