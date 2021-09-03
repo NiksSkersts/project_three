@@ -9,6 +9,7 @@ namespace content{
             UnloadTexture(water_texture);
             UnloadTexture(button_build_texture);
             UnloadTexture(mountain_texture);
+            UnloadTexture(border_texture);
         }
         //images
         Image border;
@@ -41,6 +42,7 @@ namespace content{
             button_build_texture = LoadTextureFromImage(button_build_img);
             //unload - img no longer needed;
             UnloadImage(grass);
+            UnloadImage(border);
             UnloadImage(water);
             UnloadImage(mountain);
             UnloadImage(button_build_img);

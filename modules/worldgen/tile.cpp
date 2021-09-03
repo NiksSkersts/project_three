@@ -1,4 +1,15 @@
 #include "tile.h"
+worldgen::tile::tile(Vector3 coords, worldgen::terrain_type t_type, float hum, float temp,object_type obj_type) {
+    this->coordinates = coords;
+    this->temperature = temp;
+    this->humidity = hum;
+    this->type = t_type;
+    this->obj = obj_type;
+}
+worldgen::tile::tile(Vector2 coords, bool) {
+    this->coordinates = {coords.x,coords.y,0};
+    this->type = terrain_type::border;
+}
 worldgen::tile::tile(Vector2 coords) {
     function_init_noise_settings();
     this->coordinates = {coords.x,coords.y,assign_height(coords)};
@@ -7,22 +18,10 @@ worldgen::tile::tile(Vector2 coords) {
     this->type = assign_terrain(this->coordinates.z, this->humidity, this->temperature);
     this->obj = assign_obj(this->type);
 }
-worldgen::tile::tile(Vector2 coords, bool) {
-    this->coordinates = {coords.x,coords.y,0};
-    this->type = terrain_type::border;
-}
-worldgen::tile::tile(Vector3 coords, worldgen::terrain_type t_type, float hum, float temp,object_type obj_type) {
-    this->coordinates = coords;
-    this->temperature = temp;
-    this->humidity = hum;
-    this->type = t_type;
-    this->obj = obj_type;
+worldgen::tile::~tile() {
 }
 void worldgen::tile::function_init_noise_settings() {
     // init noise settings;
-    static constexpr int var_seed {0};
-    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    noise.SetSeed(var_seed);
 }
 float worldgen::tile::assign_height(Vector2 coords){
     //sec_check if var noise ! x>= -1  AND !x <= 1 : Do it again. [Shouldn't happen];

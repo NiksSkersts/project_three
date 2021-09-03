@@ -7,14 +7,14 @@ AppInit::AppInit()
 {
     InitWindow(width, height, "project_two");
     base_settings();
-    initCamera();
-    gameLoop();
+    init_camera();
+    game_loop();
 }
 inline void AppInit::base_settings(){
     SetTargetFPS(var_fps);
     SetExitKey(27);
 }
-inline void AppInit::initCamera()
+inline void AppInit::init_camera()
 // Camera init
 {
     camera2D.target = {0,0};
@@ -22,7 +22,7 @@ inline void AppInit::initCamera()
     camera2D.rotation = 0.0f;
     camera2D.zoom = 1.0f;
 }
-inline void AppInit::gameLoop()
+inline void AppInit::game_loop()
 // Base gameloop and de-init when the while loop breaks;
 {
     content::content_manager contentManager;
@@ -31,7 +31,6 @@ inline void AppInit::gameLoop()
         update(world);
         draw();
     }
-    // de-init part
     //disabled to speed up debug
     //worldMap.function_sql_map(0);
     contentManager.function_unload_textures();
@@ -63,7 +62,7 @@ void AppInit::function_add_chunks_to_queue(worldgen::world_map &map)
     if(camera_x<0) camera_x = 0;
     if(camera_y<0) camera_y = 0;
     if(camera_x_end>var_mapsize) camera_x_end = var_mapsize;
-    if (camera_y_end>var_mapsize)camera_y_end =var_mapsize;
+    if (camera_y_end>var_mapsize)camera_y_end = var_mapsize;
     for (int i = 0; i < 3; ++i){
         std::array<worldgen::chunk *,3> row;
         std::array<worldgen::chunk_texture_map *,3> texture;
@@ -81,7 +80,8 @@ bool AppInit::function_map_should_update(){
     if(camera2D.target.x>old_coordinates.x+var_upd_range ||
             camera2D.target.x<old_coordinates.x-var_upd_range ||
             camera2D.target.y>old_coordinates.y+var_upd_range ||
-            camera2D.target.y<old_coordinates.y-var_upd_range){
+            camera2D.target.y<old_coordinates.y-var_upd_range
+            ){
         old_coordinates = camera2D.target;
         return true;
     }
@@ -109,7 +109,6 @@ void AppInit::function_get_keypress(){
 
 }
 void AppInit::draw()
-// Draw part of the loop. Rendering part
 {
     ClearBackground(BLACK);
     BeginDrawing();
@@ -118,9 +117,9 @@ void AppInit::draw()
         for (unsigned long j = 0; j < map_temp_storage.size();++j) {
             for (int x =0;x<var_chunksize;++x) {
                 for (int y = 0; y < var_chunksize; ++y) {
-                    auto texture = map_temp_storage[i].second[j]->texture_map[x][y].get();
+                    auto texture = map_temp_storage[i].second[j]->texture_map[x][y];
                     auto tile = map_temp_storage[i].first[j]->tiles_in_chunk[x][y].get();
-                    auto obj = map_temp_storage[i].second[j]->object_map[x][y].get();
+                    auto obj = map_temp_storage[i].second[j]->object_map[x][y];
                     DrawTexture(*texture,tile->coordinates.x*tile->tilesize,tile->coordinates.y*tile->tilesize,WHITE);
                     if(obj!= nullptr && tile->type!=worldgen::terrain_type::border)
                         DrawTexture(*obj,tile->coordinates.x*tile->tilesize,tile->coordinates.y*tile->tilesize,WHITE);

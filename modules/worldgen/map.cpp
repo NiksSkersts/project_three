@@ -4,12 +4,12 @@ sqlite3 *db;
 sqlite3_stmt *stmt;
 char *zErrMsg = 0;
 int rc;
+
 world_map::world_map(content::content_manager &contentManager) {
     //sqlite part moved out to scratch pad; will be redone later
     function_create_map(contentManager);
 }
 world_map::~world_map(){
-    chunk_and_texture_map.empty();
 }
 void world_map::function_create_map(content::content_manager &manager) {
     for (int k = 0; k < var_mapsize; ++k) {
