@@ -3,6 +3,7 @@
 #include <sqlite3.h>
 #include <set>
 
+//todo reimplement sqlite db
 namespace worldgen{
     class world_map {
     public:

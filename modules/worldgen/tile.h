@@ -19,8 +19,6 @@ namespace worldgen {
             Hill,
             Forest
         };
-
-        //constructors
         //loading from db
         tile(Vector3 coords, terrain_type t_type, float hum, float temp, object_type obj_type);
         //creating border

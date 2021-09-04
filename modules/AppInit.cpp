@@ -49,23 +49,28 @@ void AppInit::function_add_chunks_to_queue(worldgen::world_map &map)
 // load chunks into a vector;
 // Vector will be used to limit the amount of loaded chunks;
 {
-    auto camera_x = (int)(camera2D.target.x/1024)-1;
-    auto camera_y = (int)(camera2D.target.y/1024)-1;
-    auto camera_x_end = camera_x+3;
-    auto camera_y_end = camera_y+3;
+    int camera_x = (camera2D.target.x/1024)-1;
+    int camera_y = (camera2D.target.y/1024)-1;
     //negative int will return SEGFAULT
     if(camera_x<0) camera_x = 0;
     if(camera_y<0) camera_y = 0;
-    if(camera_x_end>var_mapsize) camera_x_end = var_mapsize;
-    if (camera_y_end>var_mapsize)camera_y_end = var_mapsize;
     for (int i = 0; i < 3; ++i){
         std::array<worldgen::chunk *,3> row;
         std::array<worldgen::chunk_texture_map *,3> texture;
         for (int j = 0; j < 3; ++j)
         {
-            auto b = map.chunk_and_texture_map.find(worldgen::chunk::function_create_chunk_id((i) * var_chunksize, (j) * var_chunksize));
-            row[j] = b->second.first.get();
-            texture[j] = b->second.second.get();
+            auto chunk_id = worldgen::chunk::function_create_chunk_id(
+                    (i+camera_x)*var_chunksize,
+                    (j+camera_y)*var_chunksize);
+            int id_count = map.chunk_and_texture_map.count(chunk_id);
+            if (id_count == 1){
+                auto chk = map.chunk_and_texture_map.find(chunk_id);
+                row[j] = chk->second.first.get();
+                texture[j] = chk->second.second.get();
+            }else{
+                row[j] = nullptr;
+                texture[j] = nullptr;
+            }
         }
         map_temp_storage[i].first = row;
         map_temp_storage[i].second = texture;
@@ -110,6 +115,7 @@ void AppInit::draw() {
     BeginMode2D(camera2D);
     for (unsigned long i = 0; i < map_temp_storage.size(); ++i) {
         for (unsigned long j = 0; j < map_temp_storage.size(); ++j) {
+            if (map_temp_storage[i].second[j] == nullptr) break;
             for (int x = 0; x < var_chunksize; ++x) {
                 for (int y = 0; y < var_chunksize; ++y) {
                     auto texture = map_temp_storage[i].second[j]->texture_map[x][y];
@@ -140,5 +146,6 @@ void AppInit::draw() {
         }
     }
     EndMode2D();
+    DrawFPS(10,10);
     EndDrawing();
 }

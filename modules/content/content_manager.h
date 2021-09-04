@@ -29,6 +29,7 @@ namespace content{
         }
         void function_load_textures()
         //Load textures on app init;
+        //todo create texture atlas and implement dynamic tile render.
         {
             //images
             border = GenImageColor(32,32,WHITE);
