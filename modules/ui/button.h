@@ -19,7 +19,7 @@ namespace ui{
         }
         ~button(){
             //todo test this, probably doesn't even work.
-            delete this;
+            //delete this;
         }
         const char* text;
         int id;

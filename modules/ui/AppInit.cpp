@@ -22,15 +22,16 @@ inline void AppInit::init_camera(){
 inline void AppInit::game_loop(){
     content::content_manager contentManager;
     auto world = worldgen::world_map(contentManager);
-    while (!WindowShouldClose()){
+    while (game){
         update(world);
         draw();
+        if (IsKeyDown(KEY_ESCAPE))
+            game = false;
     }
 #if DEBUG_MODE == false
     worldMap.function_sql_map(0);
 #endif
     contentManager.function_unload_textures();
-    CloseWindow();
 }
 void AppInit::update(worldgen::world_map &map)
 //Update part of the loop. For variables, camera  updates and so on;
