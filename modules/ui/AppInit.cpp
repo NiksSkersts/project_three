@@ -1,11 +1,10 @@
 #include "AppInit.h"
 using namespace std;
-using namespace main_logic;
+using namespace ui;
 AppInit::AppInit()
 // Opengl window init, map init and some basic config;
 // Textures must be handled after OpenGL init!
 {
-    InitWindow(width, height, "project_two");
     base_settings();
     init_camera();
     game_loop();
@@ -27,28 +26,24 @@ inline void AppInit::game_loop(){
         update(world);
         draw();
     }
-    //disabled to speed up debug
-    //worldMap.function_sql_map(0);
+#if DEBUG_MODE == false
+    worldMap.function_sql_map(0);
+#endif
     contentManager.function_unload_textures();
     CloseWindow();
 }
 void AppInit::update(worldgen::world_map &map)
 //Update part of the loop. For variables, camera  updates and so on;
 {
-    width = GetScreenWidth();
-    height = GetScreenHeight();
     //functions
     if (reload_map){
-        function_add_chunks_to_queue(map);
+        function_add_chunks_to_queue(&map);
         reload_map = false;
     }
     reload_map = function_map_should_update();
     function_get_keypress();
 }
-void AppInit::function_add_chunks_to_queue(worldgen::world_map &map)
-// load chunks into a vector;
-// Vector will be used to limit the amount of loaded chunks;
-{
+void AppInit::function_add_chunks_to_queue(worldgen::world_map *map){
     int camera_x = (camera2D.target.x/1024)-1;
     int camera_y = (camera2D.target.y/1024)-1;
     //negative int will return SEGFAULT
@@ -62,9 +57,8 @@ void AppInit::function_add_chunks_to_queue(worldgen::world_map &map)
             auto chunk_id = worldgen::chunk::function_create_chunk_id(
                     (i+camera_x)*var_chunksize,
                     (j+camera_y)*var_chunksize);
-            int id_count = map.chunk_and_texture_map.count(chunk_id);
-            if (id_count == 1){
-                auto chk = map.chunk_and_texture_map.find(chunk_id);
+            auto chk = map->chunk_and_texture_map.find(chunk_id);
+            if (chk != map->chunk_and_texture_map.end()){
                 row[j] = chk->second.first.get();
                 texture[j] = chk->second.second.get();
             }else{

@@ -1,5 +1,6 @@
 //Place define here - first header in the chain
 #define DEBUG_MODE  true
+#define GRAPHICS_API_OPENGL_33
 
 namespace content{
     class content_manager{

@@ -7,19 +7,20 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(HEADER_FILES
-        modules/AppInit.h
+        modules/ui/AppInit.h
         modules/worldgen/tile.h
         modules/worldgen/map.h
         modules/worldgen/chunk.h
         modules/content/content_manager.h
-        )
+        modules/ui/button.h
+        modules/ui/main_menu_window.h)
 set(SOURCE_FILES
         main.cpp
-        modules/AppInit.cpp
+        modules/ui/AppInit.cpp
         modules/worldgen/tile.cpp
         modules/worldgen/map.cpp
         modules/worldgen/chunk.cpp
-        )
+        modules/ui/main_menu_window.cpp)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -lsqlite3")
 #add exec
 add_executable(project_two ${HEADER_FILES} ${SOURCE_FILES})

@@ -1,5 +1,5 @@
-#include <modules/worldgen/map.h>
-namespace main_logic{
+#include "modules/worldgen/map.h"
+namespace ui{
     class AppInit {
     public:
         AppInit();
@@ -8,8 +8,6 @@ namespace main_logic{
         static constexpr int var_mapsize {worldgen::world_map::var_mapsize};
         static constexpr int var_fps {240};
         int var_upd_range{100};
-        int height {1000};
-        int width {1000};
         bool reload_map {true};
         Vector2 old_coordinates{0,0};
         Camera2D camera2D;
@@ -19,7 +17,7 @@ namespace main_logic{
         inline void init_camera();
         inline void game_loop();
         void update(worldgen::world_map &map);
-        void function_add_chunks_to_queue(worldgen::world_map &map);
+        void function_add_chunks_to_queue(worldgen::world_map *map);
         void draw();
         bool function_map_should_update();
         void function_get_keypress();

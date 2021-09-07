@@ -3,6 +3,7 @@
 #include "modules/content/content_manager.h"
 #include <cmath>
 #include <memory>
+#include <vector>
 
 namespace worldgen {
     class tile {
