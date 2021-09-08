@@ -2,11 +2,10 @@
 namespace ui{
     class AppInit {
     public:
+        bool game{true};
         AppInit();
     private:
-        bool game{true};
         static constexpr int var_chunksize {worldgen::chunk::var_chunksize};
-        static constexpr int var_mapsize {worldgen::world_map::var_mapsize};
         static constexpr int var_fps {240};
         int var_upd_range{100};
         bool reload_map {true};

@@ -8,8 +8,7 @@ namespace ui{
             main,
             options,
             credits,
-            begin_game,
-            quit
+            begin_game
         };
         bool menu {true};
         bool exit {false};

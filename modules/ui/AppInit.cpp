@@ -25,7 +25,7 @@ inline void AppInit::game_loop(){
     while (game){
         update(world);
         draw();
-        if (IsKeyDown(KEY_ESCAPE))
+        if (WindowShouldClose())
             game = false;
     }
 #if DEBUG_MODE == false

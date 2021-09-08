@@ -21,8 +21,6 @@ main_menu_window::main_menu_window() {
                     break;
                 case begin_game:
                     break;
-                case quit:
-                    break;
             }
             EndDrawing();
         };
@@ -36,8 +34,9 @@ Color main_menu_window::function_detect_mouse_over(button &button,const Vector2 
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)){
             switch(button.id) {
                 case 0:
-                    ui::AppInit();
                     menu = false;
+                    ui::AppInit();
+                    menu = true;
                     break;
                 case 1:
                     break;
